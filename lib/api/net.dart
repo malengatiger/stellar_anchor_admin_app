@@ -1,8 +1,7 @@
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:stellar_anchor_admin_app/api/util/util.dart';
+import 'package:stellar_anchor_admin_app/util/util.dart';
 
 class NetUtil {
   static const Map<String, String> xHeaders = {
@@ -16,7 +15,7 @@ class NetUtil {
       {Map<String, String> headers, String apiRoute, Map bag}) async {
     var url = await getBaseUrl();
     apiRoute = url + apiRoute;
-    print('🏈 🏈 NetUtil.post:  ................................... 🔵 '
+    print('🏈 🏈 NetUtil: POST:  ................................... 🔵 '
         '🔆 🔆 🔆 🔆 calling backend:  ......................................   💙  '
         '$apiRoute  💙  🏈 🏈 ');
     var mBag;
@@ -40,19 +39,16 @@ class NetUtil {
     print(
         'RESPONSE: 💙  💙  status: ${httpResponse.statusCode} 💙 body: ${httpResponse.body}');
     if (httpResponse.statusCode == 200) {
-      debugPrint(
-          '❤️️❤️  NetUtil.post .... : 💙 statusCode: 👌👌👌 ${httpResponse.statusCode} 👌👌👌 💙 '
+      p('❤️️❤️  NetUtil: POST.... : 💙 statusCode: 👌👌👌 ${httpResponse.statusCode} 👌👌👌 💙 '
           'for $apiRoute 🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
       var mJson = json.decode(httpResponse.body);
       return mJson;
     } else {
       var end = DateTime.now();
-      debugPrint(
-          '🔵 🔵  NetUtil: POST .... : 🔆 statusCode: 🔵 🔵  ${httpResponse.statusCode} 🔆🔆🔆 '
+      p('🔵 🔵  NetUtil: POST .... : 🔆 statusCode: 🔵 🔵  ${httpResponse.statusCode} 🔆🔆🔆 '
           'for $apiRoute  🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆 ... '
           'throwing exception .....................');
-      debugPrint(
-          '🔵 🔵  NetUtil.post .... : 🔆 statusCode: 🔵 🔵  ${httpResponse.statusCode} 🔆🔆🔆 '
+      p('🔵 🔵  NetUtil.post .... : 🔆 statusCode: 🔵 🔵  ${httpResponse.statusCode} 🔆🔆🔆 '
           'for $apiRoute  🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
       throw Exception(
           '🚨 🚨 Status Code 🚨 ${httpResponse.statusCode} 🚨 ${httpResponse.body}');
@@ -76,18 +72,15 @@ class NetUtil {
     print(
         'RESPONSE: 💙  💙  status: ${httpResponse.statusCode} 💙 body: ${httpResponse.body}');
     if (httpResponse.statusCode == 200) {
-      debugPrint(
-          '️️❤️  NetUtil: POST.... : 💙 statusCode: 👌👌👌 ${httpResponse.statusCode} 👌👌👌 💙 for $apiRoute 🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
+      p('️️❤️  NetUtil: GET: .... : 💙 statusCode: 👌👌👌 ${httpResponse.statusCode} 👌👌👌 💙 for $apiRoute 🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
       var mJson = json.decode(httpResponse.body);
       return mJson;
     } else {
       var end = DateTime.now();
-      debugPrint(
-          '👿👿👿 NetUtil.post .... : 🔆 statusCode: 👿👿👿 ${httpResponse.statusCode} 🔆🔆🔆 '
+      p('👿👿👿 NetUtil: POST: .... : 🔆 statusCode: 👿👿👿 ${httpResponse.statusCode} 🔆🔆🔆 '
           'for $apiRoute  🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆 ... '
           'throwing exception .....................');
-      debugPrint(
-          '👿👿👿 NetUtil.post .... : 🔆 statusCode: 👿👿👿 ${httpResponse.statusCode} 🔆🔆🔆 for $apiRoute  🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
+      p('👿👿👿 NetUtil: POST: .... : 🔆 statusCode: 👿👿👿 ${httpResponse.statusCode} 🔆🔆🔆 for $apiRoute  🔆 elapsed: ${end.difference(start).inSeconds} seconds 🔆');
       throw Exception(
           '🚨 🚨 Status Code 🚨 ${httpResponse.statusCode} 🚨 ${httpResponse.body}');
     }

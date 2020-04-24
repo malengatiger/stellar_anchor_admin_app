@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:stellar_anchor_admin_app/util/util.dart';
 
 class SplashDesktop extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    debugPrint('SplashDesktop running 💙');
+    p('SplashDesktop running 💙');
     return Row(
       children: <Widget>[
         IntroductionCard(),
-        CallToAction(),
       ],
     );
   }
@@ -23,11 +23,8 @@ class IntroductionCard extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Text(
-              "Agent information here",
-              style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white),
+              lorem,
+              style: TextStyle(fontSize: 12, color: Colors.white),
             ),
           ],
         ),
