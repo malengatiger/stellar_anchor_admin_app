@@ -109,7 +109,7 @@ class _AgentListState extends State<AgentList>
             child: Column(
               children: <Widget>[
                 Text(
-                  _anchor.name,
+                  _anchor.name == null ? '' : _anchor.name,
                   style: Styles.blackBoldMedium,
                 ),
               ],

@@ -77,12 +77,14 @@ class AgentBloc {
         _agents.add(Agent.fromJson(doc.data));
       });
 
+      _busies.clear();
       _busies.add(false);
       _busyController.sink.add(_busies);
       _agentController.sink.add(_agents);
       p('🌿 🌿 🌿 Agents found on database : 🎁  ${_agents.length} 🎁 ');
     } catch (e) {
       p(e);
+      _errors.clear();
       _errors.add('Firestore agent query failed');
       _errorController.sink.add(_errors);
     }
@@ -97,12 +99,12 @@ class AgentBloc {
           .collection('clients')
           .where('agentId', isEqualTo: agentId)
           .getDocuments();
-
+      p('🌸 🌸 🌸  we are here ... 1 - found ${qs.documents.length}');
       _clients.clear();
       qs.documents.forEach((doc) {
         _clients.add(Client.fromJson(doc.data));
       });
-
+      p('🌸 🌸 🌸  we are here ... 2 - found ${qs.documents.length}');
       _busies.clear();
       _busies.add(false);
       _busyController.sink.add(_busies);

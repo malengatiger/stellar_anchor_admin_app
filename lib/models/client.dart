@@ -18,13 +18,12 @@ class Client {
     private PersonalKYCFields personalKYCFields;
    */
   String anchorId, agentId;
-  double clientId, startingFiatBalance;
+  String clientId, startingFiatBalance;
+  double latitude, longitude;
   String dateRegistered,
       dateUpdated,
       externalAccountId,
       account,
-      latitude,
-      longitude,
       fiatLimit,
       password,
       secretSeed;

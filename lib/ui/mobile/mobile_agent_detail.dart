@@ -8,6 +8,7 @@ import 'package:stellar_anchor_admin_app/models/client.dart';
 import 'package:stellar_anchor_admin_app/ui/agent_editor.dart';
 import 'package:stellar_anchor_admin_app/ui/agent_list.dart';
 import 'package:stellar_anchor_admin_app/util/functions.dart';
+import 'package:stellar_anchor_admin_app/util/image_handler/currency_icons.dart';
 import 'package:stellar_anchor_admin_app/util/image_handler/random_image.dart';
 import 'package:stellar_anchor_admin_app/util/util.dart';
 
@@ -168,15 +169,17 @@ class AgentDetailMobile extends StatelessWidget {
                                 currency =
                                     mBal.balances.elementAt(index).assetCode;
                               }
+                              var imagePath =
+                                  CurrencyIcons.getCurrencyImagePath(currency);
                               return Padding(
                                 padding: const EdgeInsets.only(
                                     left: 8.0, right: 8.0, top: 4),
                                 child: Row(
                                   children: <Widget>[
-                                    Text(
-                                      currency,
-                                      style: Styles.blackBoldSmall,
-                                    ),
+                                    Container(
+                                        width: 24,
+                                        height: 24,
+                                        child: Image.asset(imagePath)),
                                     SizedBox(
                                       width: 8,
                                     ),
