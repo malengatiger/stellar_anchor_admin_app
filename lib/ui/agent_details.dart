@@ -14,8 +14,11 @@ class AgentDetail extends StatefulWidget {
 class _AgentDetailState extends State<AgentDetail> {
   @override
   Widget build(BuildContext context) {
+    if (widget.agent == null) {
+      throw Exception('Agent is null');
+    }
     return ScreenTypeLayout(
-      mobile: AgentDetailMobile(agent: widget.agent),
+      mobile: AgentDetailMobile(widget.agent),
     );
   }
 }

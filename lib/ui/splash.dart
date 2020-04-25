@@ -35,7 +35,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     );
 
     animation = Tween(begin: 0.0, end: 1.0).animate(animController);
-    animation2 = Tween(begin: 1.0, end: 0.0).animate(animController);
+    animation2 = Tween(begin: 0.0, end: 1.0).animate(animController);
     animController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         p(".......... 💦 💦 💦 Forward Animation completed");
@@ -86,6 +86,20 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
           padding: const EdgeInsets.all(8.0),
           child: Stack(
             children: <Widget>[
+              Positioned(
+                top: 220,
+                left: 100,
+                child: ScaleTransition(
+                  scale: animation2,
+                  child: Hero(
+                    tag: 'logo',
+                    child: Image.asset(
+                      'assets/logo/logo.png',
+                      scale: 0.6,
+                    ),
+                  ),
+                ),
+              ),
               anchorUser == null
                   ? Container()
                   : Padding(
@@ -93,9 +107,11 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                       child: ScaleTransition(
                         scale: animation,
                         child: Column(
+//                          crossAxisAlignment: CrossAxisAlignment.center,
+//                          mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             SizedBox(
-                              height: 300,
+                              height: 320,
                             ),
                             Text(anchorUser.firstName,
                                 style: TextStyle(
@@ -119,12 +135,12 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                   ),
                   Spacer(),
                   RaisedButton(
-                      elevation: 8,
-                      color: Theme.of(context).primaryColor,
+                      elevation: 2,
+                      color: Colors.brown[100],
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
-                          "Agent Listing",
+                          "Continue ...",
                           style: TextStyle(color: Colors.white, fontSize: 14),
                         ),
                       ),
@@ -150,43 +166,6 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                   )
                 ],
               ),
-//              AnimatedPositioned(
-//                duration: Duration(seconds: 1),
-//                left: left,
-//                top: top,
-//                curve: _first ? Curves.easeInOut : Curves.bounceOut,
-//                child: GestureDetector(
-//                  onTap: () {
-//                    if (_first) {
-//                      _moveDown();
-//                    } else {
-//                      _moveUp();
-//                    }
-//                    _first = !_first;
-//                  },
-//                  child: Card(
-//                    elevation: 8,
-//                    color: Colors.pink[700],
-//                    child: Padding(
-//                      padding: const EdgeInsets.all(8.0),
-//                      child: Container(
-//                        height: 80,
-//                        child: Column(
-//                          children: <Widget>[
-//                            Padding(
-//                              padding: const EdgeInsets.all(8.0),
-//                              child: Text(
-//                                "I float above the rest",
-//                                style: TextStyle(color: Colors.white),
-//                              ),
-//                            )
-//                          ],
-//                        ),
-//                      ),
-//                    ),
-//                  ),
-//                ),
-//              ),
               isBusy
                   ? Positioned(
                       left: 160,

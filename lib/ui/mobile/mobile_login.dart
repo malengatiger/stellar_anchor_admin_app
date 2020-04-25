@@ -76,7 +76,7 @@ class _LoginFormState extends State<LoginForm>
   @override
   void initState() {
     super.initState();
-    emailCntr.text = 'anchor_1587621720210@anchorahoy.com';
+    emailCntr.text = 'a_1587785499650@anchor.com';
     pswdCntr.text = 'pTiger3#Word!isWannamaker#23';
     _setUpAnimation();
   }
@@ -167,9 +167,24 @@ class _LoginFormState extends State<LoginForm>
                             titleController.reset();
                             titleController.forward();
                           },
-                          child: Text(
-                            'Anchor Sign in',
-                            style: Styles.blackBoldLarge,
+                          child: Row(
+                            children: <Widget>[
+                              Hero(
+                                tag: 'logo',
+                                child: Image.asset(
+                                  'assets/logo/logo.png',
+                                  width: 48,
+                                  height: 48,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 20,
+                              ),
+                              Text(
+                                'Anchor Sign in',
+                                style: Styles.blackBoldMedium,
+                              ),
+                            ],
                           ),
                         ),
                       ),

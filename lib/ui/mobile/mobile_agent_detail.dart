@@ -15,7 +15,7 @@ import 'package:stellar_anchor_admin_app/util/util.dart';
 class AgentDetailMobile extends StatelessWidget {
   final Agent agent;
 
-  const AgentDetailMobile({Key key, this.agent}) : super(key: key);
+  const AgentDetailMobile(this.agent);
 
   @override
   Widget build(BuildContext context) {
@@ -40,12 +40,13 @@ class AgentDetailMobile extends StatelessWidget {
             IconButton(
                 icon: Icon(Icons.create),
                 onPressed: () {
+                  assert(agent != null);
                   Navigator.push(
                       context,
                       PageTransition(
                           type: PageTransitionType.scale,
-                          curve: Curves.easeInBack,
-                          duration: Duration(seconds: 1),
+                          curve: Curves.easeInOut,
+                          duration: Duration(seconds: 2),
                           child: AgentEditor(
                             agent: agent,
                           )));

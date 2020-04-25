@@ -5,7 +5,7 @@ import 'package:stellar_anchor_admin_app/util/util.dart';
 class SplashMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    p('🍎 SplashMobile running 💙');
+    p('🍎 🍎  🍎  🍎  🍎  SplashMobile:build running 💙');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[

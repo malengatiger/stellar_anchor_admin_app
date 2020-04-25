@@ -14,6 +14,7 @@ class AgentEditorMobile extends StatefulWidget {
 class _AgentEditorMobileState extends State<AgentEditorMobile> {
   @override
   Widget build(BuildContext context) {
+    assert(widget.agent != null);
     return Scaffold(
       body: PageView(
         scrollDirection: Axis.horizontal,
@@ -35,8 +36,28 @@ class PageUno extends StatefulWidget {
   _PageUnoState createState() => _PageUnoState();
 }
 
-class _PageUnoState extends State<PageUno> {
+class _PageUnoState extends State<PageUno> with SingleTickerProviderStateMixin {
   var _formState = GlobalKey<FormState>();
+  var fNameController = TextEditingController();
+  var lNameController = TextEditingController();
+  var emailController = TextEditingController();
+  var cellController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.agent != null) {
+      fNameController.text = widget.agent.personalKYCFields.firstName;
+      lNameController.text = widget.agent.personalKYCFields.lastName;
+      emailController.text = widget.agent.personalKYCFields.emailAddress;
+      cellController.text = widget.agent.personalKYCFields.mobileNumber;
+    } else {
+      p('MobileAgentEditor - agent is null 🔆 🔆 🔆 ');
+    }
+  }
+
+  double height = 600, width = 400;
+  bool isBusy = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -45,6 +66,7 @@ class _PageUnoState extends State<PageUno> {
         child: ListView(
           children: <Widget>[
             TextFormField(
+              controller: fNameController,
               decoration: InputDecoration(
                 labelText: 'First Name',
                 hintText: 'Enter First Name',
@@ -60,6 +82,7 @@ class _PageUnoState extends State<PageUno> {
               height: 8,
             ),
             TextFormField(
+              controller: lNameController,
               decoration: InputDecoration(
                 labelText: 'Last Name',
                 hintText: 'Enter Last Name',
@@ -71,18 +94,56 @@ class _PageUnoState extends State<PageUno> {
                 return null;
               },
             ),
+            TextFormField(
+              controller: emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                labelText: 'Email Address',
+                hintText: 'Enter Email',
+              ),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please enter Email';
+                }
+                return null;
+              },
+            ),
+            TextFormField(
+              controller: cellController,
+              keyboardType: TextInputType.phone,
+              decoration: InputDecoration(
+                labelText: 'Cellphone Number',
+                hintText: 'Enter Cellphone Number',
+              ),
+              validator: (value) {
+                if (value.isEmpty) {
+                  return 'Please enter Cellphone Number';
+                }
+                return null;
+              },
+            ),
             SizedBox(
-              height: 8,
+              height: 28,
             ),
             Container(
               child: RaisedButton(
                   color: baseColor,
+                  elevation: 4,
                   onPressed: () {
-                    p('Next Pressed');
+                    setState(() {
+                      isBusy = !isBusy;
+                    });
                   },
-                  child: Text(
-                    'Next',
-                    style: Styles.blueSmall,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: isBusy
+                        ? Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : Text(
+                            'Next',
+                            style: Styles.blueSmall,
+                          ),
                   )),
             )
           ],

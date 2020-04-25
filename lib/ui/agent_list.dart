@@ -78,8 +78,8 @@ class _AgentListState extends State<AgentList>
         context,
         PageTransition(
             type: PageTransitionType.scale,
-            curve: Curves.easeInBack,
-            duration: Duration(seconds: 1),
+            curve: Curves.easeInOut,
+            duration: Duration(seconds: 2),
             child: AgentDetail(
               agent: agent,
             )));

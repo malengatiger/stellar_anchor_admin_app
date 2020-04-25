@@ -18,7 +18,10 @@ class _AgentEditorState extends State<AgentEditor> {
     return SafeArea(
         child: Scaffold(
             appBar: AppBar(
-              title: Text('Agent Editor'),
+              title: Text(
+                'Agent Editor',
+                style: Styles.whiteSmall,
+              ),
               backgroundColor: Colors.brown[100],
               bottom: PreferredSize(
                   child: Column(
@@ -39,7 +42,7 @@ class _AgentEditorState extends State<AgentEditor> {
             body: Padding(
               padding: const EdgeInsets.all(20.0),
               child: ScreenTypeLayout(
-                mobile: AgentEditorMobile(),
+                mobile: AgentEditorMobile(agent: widget.agent),
               ),
             )));
   }
