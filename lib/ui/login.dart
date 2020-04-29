@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:stellar_anchor_admin_app/ui/mobile/mobile_login.dart';
-import 'package:stellar_anchor_admin_app/util/util.dart';
+import 'package:stellar_anchor_library/util/util.dart';
 
 class Login extends StatefulWidget {
   @override

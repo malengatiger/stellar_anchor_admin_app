@@ -2,32 +2,79 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:stellar_anchor_admin_app/bloc/agent_bloc.dart';
-import 'package:stellar_anchor_admin_app/models/agent.dart';
-import 'package:stellar_anchor_admin_app/models/balances.dart';
-import 'package:stellar_anchor_admin_app/models/client.dart';
 import 'package:stellar_anchor_admin_app/ui/agent_editor.dart';
-import 'package:stellar_anchor_admin_app/ui/agent_list.dart';
-import 'package:stellar_anchor_admin_app/util/functions.dart';
-import 'package:stellar_anchor_admin_app/util/image_handler/currency_icons.dart';
-import 'package:stellar_anchor_admin_app/util/image_handler/random_image.dart';
-import 'package:stellar_anchor_admin_app/util/util.dart';
+import 'package:stellar_anchor_admin_app/ui/funder.dart';
+import 'package:stellar_anchor_library/models/agent.dart';
+import 'package:stellar_anchor_library/models/balances.dart';
+import 'package:stellar_anchor_library/models/client.dart';
+import 'package:stellar_anchor_library/util/functions.dart';
+import 'package:stellar_anchor_library/util/image_handler/random_image.dart';
+import 'package:stellar_anchor_library/util/util.dart';
+import 'package:stellar_anchor_library/widgets/agent_widgets.dart';
+import 'package:stellar_anchor_library/widgets/avatar.dart';
+import 'package:stellar_anchor_library/widgets/balances_scroller.dart';
+import 'package:stellar_anchor_library/widgets/contact_widgets.dart';
+import 'package:stellar_anchor_library/widgets/sizes.dart';
 
-class AgentDetailMobile extends StatelessWidget {
+class AgentDetailMobile extends StatefulWidget {
   final Agent agent;
-
   const AgentDetailMobile(this.agent);
 
   @override
-  Widget build(BuildContext context) {
-    var image = RandomImage.getImage();
-    p('Getting agent clients from bloc .... 🥦 🥦 🥦 ...');
-    List<Balances> balancesList = List();
-    agentBloc.getClients(agent.agentId);
-    agentBloc.getBalances(agent.stellarAccountId);
-    bool isBusy = false;
+  _AgentDetailMobileState createState() => _AgentDetailMobileState();
+}
+
+class _AgentDetailMobileState extends State<AgentDetailMobile> {
+  bool weAreInProduction = false;
+  List<Balances> balancesList = List();
+  Balances currentBalances;
+  List<Client> clients = [];
+  String path;
+  bool isBusy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _setup();
+  }
+
+  _setup() async {
+    weAreInProduction = await isProductionMode();
+    path = RandomImage.getImagePath();
+    clients = await agentBloc.getClients(widget.agent.agentId);
+    currentBalances =
+        await agentBloc.getBalances(widget.agent.stellarAccountId);
+    p('🎁 Clients and Balances received in UI ... 🔆 🔆 🔆 🔆 🔆 🔆 🔆 ');
     agentBloc.busyStream.listen((List<bool> busies) {
-      p('Received busy shit ... 🔆 🔆 🔆 🔆 🔆 🔆 🔆 ');
+      p('Received busy status ... 🔆 🔆 🔆  ${busies.last}');
+      if (mounted) {
+        setState(() {
+          isBusy = busies.last;
+        });
+      }
     });
+  }
+
+  String getPath() {
+    path = RandomImage.getImagePath();
+    if (weAreInProduction) {
+      if (widget.agent.url == null) {
+        return 'assets/logo/logo.png';
+      } else {
+        return widget.agent.url;
+      }
+    } else {
+      if (widget.agent.url != null) {
+        return widget.agent.url;
+      }
+      return path;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    p('Getting agent clients from bloc .... 🥦 🥦 🥦 ...');
+    var width = displayWidth(context);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -38,9 +85,22 @@ class AgentDetailMobile extends StatelessWidget {
           backgroundColor: Colors.brown[100],
           actions: <Widget>[
             IconButton(
+                icon: Icon(Icons.attach_money),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      PageTransition(
+                          type: PageTransitionType.scale,
+                          curve: Curves.easeInOut,
+                          duration: Duration(seconds: 2),
+                          child: AgentFunder(
+                            agent: widget.agent,
+                          )));
+                }),
+            IconButton(
                 icon: Icon(Icons.create),
                 onPressed: () {
-                  assert(agent != null);
+                  assert(widget.agent != null);
                   Navigator.push(
                       context,
                       PageTransition(
@@ -48,14 +108,14 @@ class AgentDetailMobile extends StatelessWidget {
                           curve: Curves.easeInOut,
                           duration: Duration(seconds: 2),
                           child: AgentEditor(
-                            agent: agent,
+                            agent: widget.agent,
                           )));
                 }),
             IconButton(
                 icon: Icon(Icons.refresh),
                 onPressed: () {
-                  agentBloc.getClients(agent.agentId);
-                  agentBloc.getBalances(agent.stellarAccountId);
+                  agentBloc.getClients(widget.agent.agentId);
+                  agentBloc.getBalances(widget.agent.stellarAccountId);
                 }),
           ],
           elevation: 0,
@@ -66,20 +126,8 @@ class AgentDetailMobile extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   Text(
-                    agent.personalKYCFields.getFullName(),
+                    widget.agent.personalKYCFields.getFullName(),
                     style: Styles.blackBoldMedium,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      isBusy
-                          ? Container(
-                              width: 20,
-                              height: 20,
-                              color: baseColor,
-                              child: CircularProgressIndicator())
-                          : Container(),
-                    ],
                   ),
                   SizedBox(
                     height: 0,
@@ -103,35 +151,30 @@ class AgentDetailMobile extends StatelessWidget {
                 child: ListView(
                   children: <Widget>[
                     SizedBox(
-                      height: 40,
+                      height: isBusy ? 10 : 40,
                     ),
                     EmailWidget(
-                      agent: agent,
+                      emailAddress: widget.agent.personalKYCFields.emailAddress,
                     ),
                     PhoneWidget(
-                      agent: agent,
+                      phoneNumber: widget.agent.personalKYCFields.mobileNumber,
                     ),
                     AgentClientsWidget(
-                      agent: agent,
+                      agent: widget.agent,
                     ),
                   ],
                 ),
               ),
             ),
             Positioned(
-              right: 20,
-              bottom: 20,
+              right: 0,
+              bottom: 70,
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
-                child: Container(
-                    decoration: BoxDecoration(
-                        boxShadow: customShadow,
-                        color: baseColor,
-                        shape: BoxShape.circle),
-                    child: CircleAvatar(
-                      backgroundImage: AssetImage(image),
-                      radius: 100.0,
-                    )),
+                child: RoundAvatar(
+                    path: getPath(),
+                    radius: 200,
+                    fromNetwork: weAreInProduction),
               ),
             ),
             Positioned(
@@ -143,7 +186,7 @@ class AgentDetailMobile extends StatelessWidget {
               left: 20,
               bottom: 20,
               child: Container(
-                width: 180,
+                width: width - 40,
                 height: 60,
                 decoration:
                     BoxDecoration(boxShadow: customShadow, color: baseColor),
@@ -158,161 +201,28 @@ class AgentDetailMobile extends StatelessWidget {
                           balancesList = snapshot.data;
                           mBal = balancesList.last;
                         }
-                        return ListView.builder(
-                            itemCount: mBal == null ? 0 : mBal.balances.length,
-                            scrollDirection: Axis.horizontal,
-                            itemBuilder: (context, index) {
-                              var currency = 'XLM';
-                              if (mBal.balances.elementAt(index).assetCode ==
-                                  null) {
-                                currency = 'XLM';
-                              } else {
-                                currency =
-                                    mBal.balances.elementAt(index).assetCode;
-                              }
-                              var imagePath =
-                                  CurrencyIcons.getCurrencyImagePath(currency);
-                              return Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 8.0, right: 8.0, top: 4),
-                                child: Row(
-                                  children: <Widget>[
-                                    Container(
-                                        width: 24,
-                                        height: 24,
-                                        child: Image.asset(imagePath)),
-                                    SizedBox(
-                                      width: 8,
-                                    ),
-                                    Text(
-                                      getFormattedAmount(
-                                          mBal.balances
-                                              .elementAt(index)
-                                              .balance,
-                                          context),
-                                      style: Styles.tealBoldSmall,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            });
+                        return Center(
+                          child: BalancesScroller(
+                            balances: mBal,
+                            direction: Axis.horizontal,
+                          ),
+                        );
                       }),
                 ),
               ),
             ),
+            isBusy
+                ? Positioned(
+                    left: 20,
+                    top: 0,
+                    child: Container(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(),
+                    ),
+                  )
+                : Container(),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class EmailWidget extends StatelessWidget {
-  final Agent agent;
-
-  const EmailWidget({Key key, this.agent}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16.0, top: 12, right: 16),
-      child: Container(
-//        decoration: BoxDecoration(boxShadow: customShadow, color: baseColor),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: <Widget>[
-              SizedBox(
-                width: 60,
-                child: MyAvatar(
-                  icon: Icon(Icons.email),
-                ),
-              ),
-              Expanded(child: Text(agent.personalKYCFields.emailAddress))
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class PhoneWidget extends StatelessWidget {
-  final Agent agent;
-
-  const PhoneWidget({Key key, this.agent}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16.0, top: 12, right: 16),
-      child: Container(
-//        decoration: BoxDecoration(boxShadow: customShadow, color: baseColor),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: <Widget>[
-              SizedBox(
-                width: 60,
-                child: MyAvatar(
-                  icon: Icon(
-                    Icons.phone,
-                    color: Colors.blue,
-                  ),
-                ),
-              ),
-              Text(agent.personalKYCFields.mobileNumber)
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class AgentClientsWidget extends StatelessWidget {
-  final Agent agent;
-
-  const AgentClientsWidget({Key key, this.agent}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 16.0, top: 12, right: 16),
-      child: Container(
-//        decoration: BoxDecoration(boxShadow: customShadow, color: baseColor),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: <Widget>[
-              SizedBox(
-                width: 60,
-                child: MyAvatar(
-                  icon: Icon(
-                    Icons.people,
-                    color: Colors.pink,
-                  ),
-                ),
-              ),
-              Row(
-                children: <Widget>[
-                  Text("Clients"),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  StreamBuilder<List<Client>>(
-                      stream: agentBloc.clientStream,
-                      builder: (context, snapshot) {
-                        var total = 0;
-                        if (snapshot.hasData) {
-                          total = snapshot.data.length;
-                        }
-                        return Text(
-                          '$total',
-                          style: Styles.blueBoldMedium,
-                        );
-                      }),
-                ],
-              )
-            ],
-          ),
         ),
       ),
     );

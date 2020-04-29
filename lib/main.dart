@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:stellar_anchor_admin_app/ui/splash.dart';
 
 void main() {
@@ -11,10 +12,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'AnchorAdmin',
       theme: ThemeData(
-        primarySwatch: Colors.pink,
-      ),
+          primarySwatch: Colors.pink,
+          textTheme: GoogleFonts.ralewayTextTheme()),
       home: Splash(),
     );
   }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:stellar_anchor_admin_app/api/auth.dart';
-import 'package:stellar_anchor_admin_app/util/functions.dart';
-import 'package:stellar_anchor_admin_app/util/snack.dart';
-import 'package:stellar_anchor_admin_app/util/util.dart';
+import 'package:stellar_anchor_library/api/auth.dart';
+import 'package:stellar_anchor_library/util/functions.dart';
+import 'package:stellar_anchor_library/util/snack.dart';
+import 'package:stellar_anchor_library/util/util.dart';
 
 class LoginMobile extends StatefulWidget {
   @override
@@ -121,8 +121,8 @@ class _LoginFormState extends State<LoginForm>
       isBusy = true;
     });
     try {
-      var user =
-          await Auth.signIn(email: emailCntr.text, password: pswdCntr.text);
+      var user = await Auth.signInAnchor(
+          email: emailCntr.text, password: pswdCntr.text);
       print('✳️ ️signed in ok, ✳️ popping ..... anchorUser: ${user.toJson()}');
       Navigator.pop(context, true);
     } catch (e) {

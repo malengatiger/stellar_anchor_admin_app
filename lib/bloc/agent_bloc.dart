@@ -3,13 +3,15 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:stellar_anchor_admin_app/api/net.dart';
-import 'package:stellar_anchor_admin_app/models/agent.dart';
-import 'package:stellar_anchor_admin_app/models/anchor.dart';
-import 'package:stellar_anchor_admin_app/models/balances.dart';
-import 'package:stellar_anchor_admin_app/models/client.dart';
-import 'package:stellar_anchor_admin_app/util/prefs.dart';
-import 'package:stellar_anchor_admin_app/util/util.dart';
+import 'package:flutter/material.dart';
+import 'package:stellar_anchor_library/api/net.dart';
+import 'package:stellar_anchor_library/models/agent.dart';
+import 'package:stellar_anchor_library/models/anchor.dart';
+import 'package:stellar_anchor_library/models/balances.dart';
+import 'package:stellar_anchor_library/models/client.dart';
+import 'package:stellar_anchor_library/models/payment_request.dart';
+import 'package:stellar_anchor_library/util/prefs.dart';
+import 'package:stellar_anchor_library/util/util.dart';
 
 final AgentBloc agentBloc = AgentBloc();
 
@@ -58,6 +60,24 @@ class AgentBloc {
     return _anchor;
   }
 
+// public PaymentRequest sendPayment(PaymentRequest paymentRequest) throws Exception {
+  Future sendMoneyToAgent(
+      {@required Agent agent,
+      @required String amount,
+      @required String assetCode}) async {
+   
+    var fundRequest = AgentFundingRequest(
+        anchorId: agent.anchorId,
+        amount: amount,
+        date: DateTime.now().toIso8601String(),
+        agentId: agent.agentId,
+        assetCode: assetCode);
+
+    var result = await NetUtil.post(
+        headers: null, apiRoute: 'fundAgent', bag: fundRequest.toJson());
+    p(result);
+  }
+
   Future<AnchorUser> getAnchorUser() async {
     _anchorUser = await Prefs.getAnchorUser();
     return _anchorUser;
@@ -99,12 +119,10 @@ class AgentBloc {
           .collection('clients')
           .where('agentId', isEqualTo: agentId)
           .getDocuments();
-      p('🌸 🌸 🌸  we are here ... 1 - found ${qs.documents.length}');
       _clients.clear();
       qs.documents.forEach((doc) {
         _clients.add(Client.fromJson(doc.data));
       });
-      p('🌸 🌸 🌸  we are here ... 2 - found ${qs.documents.length}');
       _busies.clear();
       _busies.add(false);
       _busyController.sink.add(_busies);
@@ -145,6 +163,14 @@ class AgentBloc {
       _errors.clear();
       _errors.add('Firestore balances query failed');
       _errorController.sink.add(_errors);
+    }
+    if (_balances.isEmpty) {
+      var msg = 'Balances not found on Stellar';
+      _errors.clear();
+      _errors.add(msg);
+      _errorController.sink.add(_errors);
+      p(' 🍎 $msg');
+      throw Exception(msg);
     }
     return _balances.last;
   }

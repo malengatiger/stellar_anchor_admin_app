@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:stellar_anchor_admin_app/bloc/agent_bloc.dart';
-import 'package:stellar_anchor_admin_app/models/agent.dart';
-import 'package:stellar_anchor_admin_app/models/anchor.dart';
 import 'package:stellar_anchor_admin_app/ui/agent_details.dart';
 import 'package:stellar_anchor_admin_app/ui/agent_editor.dart';
-import 'package:stellar_anchor_admin_app/util/functions.dart';
-import 'package:stellar_anchor_admin_app/util/util.dart';
+import 'package:stellar_anchor_library/models/agent.dart';
+import 'package:stellar_anchor_library/models/anchor.dart';
+import 'package:stellar_anchor_library/util/functions.dart';
+import 'package:stellar_anchor_library/util/util.dart';
+import 'package:stellar_anchor_library/widgets/avatar.dart';
 
 class AgentList extends StatefulWidget {
   @override
@@ -17,13 +18,20 @@ class _AgentListState extends State<AgentList>
     with SingleTickerProviderStateMixin {
   AnimationController animController;
   Animation animation, animation2;
+  bool productionMode = false;
+  bool isBusy;
 
   @override
   void initState() {
     super.initState();
+    _setProductionStatus();
     _setAnimation();
     _listenForBusy();
     _refresh();
+  }
+
+  _setProductionStatus() async {
+    productionMode = await isProductionMode();
   }
 
   _setAnimation() {
@@ -43,7 +51,6 @@ class _AgentListState extends State<AgentList>
 
   List<Agent> _agents = List();
   Anchor _anchor;
-  bool isBusy = false;
 
   _listenForBusy() {
     agentBloc.busyStream.listen((List<bool> mBusy) {
@@ -106,13 +113,20 @@ class _AgentListState extends State<AgentList>
       appBar: AppBar(
         backgroundColor: Colors.brown[100],
         bottom: PreferredSize(
-            child: Column(
-              children: <Widget>[
-                Text(
-                  _anchor.name == null ? '' : _anchor.name,
-                  style: Styles.blackBoldMedium,
-                ),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20.0),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        _anchor == null ? '' : _anchor.name,
+                        style: Styles.blackBoldMedium,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
             preferredSize: Size.fromHeight(60)),
         elevation: 0,
@@ -136,30 +150,37 @@ class _AgentListState extends State<AgentList>
       body: Stack(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(top: 28.0),
+            padding: const EdgeInsets.only(top: 48.0),
             child: StreamBuilder<List<Agent>>(
                 stream: agentBloc.agentStream,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     _agents = snapshot.data;
                   }
+
                   return ListView.builder(
                       itemCount: _agents.length,
                       itemBuilder: (context, index) {
+                        var mAgent = _agents.elementAt(index);
                         return Padding(
                           padding: const EdgeInsets.only(
                               left: 20.0, right: 20, top: 12),
                           child: GestureDetector(
                             onTap: () {
-                              _navigateToAgentDetails(_agents.elementAt(index));
+                              _navigateToAgentDetails(mAgent);
                             },
                             child: Container(
                               height: 60,
                               decoration: BoxDecoration(
                                   boxShadow: customShadow, color: baseColor),
                               child: ListTile(
-                                leading: MyAvatar(
-                                  icon: Icon(Icons.person),
+                                leading: RoundAvatar(
+                                  path: mAgent.url == null
+                                      ? 'assets/logo/logo.png'
+                                      : mAgent.url,
+                                  radius: mAgent.url == null ? 20 : 48,
+                                  fromNetwork:
+                                      mAgent.url == null ? false : true,
                                 ),
                                 title: Text(
                                   _agents
@@ -176,52 +197,27 @@ class _AgentListState extends State<AgentList>
                 }),
           ),
           Positioned(
-            left: left,
-            bottom: bottom,
-            right: right,
-            top: top,
-            child: GestureDetector(
-              onTap: () {
-                setState(() {
-                  isBusy = true;
-                  if (isUp) {
-                    _moveDown();
-                  } else {
-                    _moveUp();
-                  }
-                  isUp = !isUp;
-                });
-                _refresh();
-                if (isUp) {
-                  _moveDown();
-                } else {
-                  _moveUp();
-                }
-              },
-              child: Card(
+            right: 20,
+            top: 0,
+            child: Container(
+              width: _agents.length < 100000 ? 80 : 90,
+              height: _agents.length < 100000 ? 80 : 90,
+              decoration: BoxDecoration(
+                  boxShadow: customShadow,
+                  color: secondaryColor,
+                  shape: BoxShape.circle),
+              child: Center(
                 child: Container(
-                  decoration:
-                      BoxDecoration(boxShadow: customShadow, color: baseColor),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      children: <Widget>[
-                        Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                              boxShadow: customShadow,
-                              color: baseColor,
-                              shape: BoxShape.circle),
-                          child: Center(
-                            child: Text(
-                              "${_agents.length}",
-                              style: Styles.pinkBoldMedium,
-                            ),
-                          ),
-                        ),
-                        Text('Agents'),
-                      ],
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                      boxShadow: customShadow,
+                      color: baseColor,
+                      shape: BoxShape.circle),
+                  child: Center(
+                    child: Text(
+                      "${_agents.length}",
+                      style: Styles.blackBoldSmall,
                     ),
                   ),
                 ),
@@ -246,7 +242,7 @@ class _AgentListState extends State<AgentList>
     );
   }
 
-  double left = 40.0, bottom = 40.0, top, right;
+  double left = 40.0, bottom, top = 40, right;
   bool isUp = true;
 
   _moveUp() {
@@ -261,59 +257,5 @@ class _AgentListState extends State<AgentList>
       left = 40;
       bottom = 40;
     });
-  }
-}
-
-class MyAvatar extends StatelessWidget {
-  final Icon icon;
-
-  const MyAvatar({Key key, this.icon}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 24,
-      height: 24,
-      decoration: BoxDecoration(
-          boxShadow: customShadow, color: baseColor, shape: BoxShape.circle),
-      child: icon,
-    );
-  }
-}
-
-class TransitionListTile extends StatelessWidget {
-  const TransitionListTile({
-    this.onTap,
-    this.title,
-    this.subtitle,
-  });
-
-  final GestureTapCallback onTap;
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 15.0,
-      ),
-      leading: Container(
-        width: 40.0,
-        height: 40.0,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20.0),
-          border: Border.all(
-            color: Colors.black54,
-          ),
-        ),
-        child: Icon(
-          Icons.play_arrow,
-          size: 35,
-        ),
-      ),
-      onTap: onTap,
-      title: Text(title),
-      subtitle: Text(subtitle),
-    );
   }
 }

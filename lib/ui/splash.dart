@@ -2,13 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:responsive_builder/responsive_builder.dart';
-import 'package:stellar_anchor_admin_app/models/anchor.dart';
 import 'package:stellar_anchor_admin_app/ui/desktop/splash_desktop.dart';
 import 'package:stellar_anchor_admin_app/ui/mobile/splash_mobile.dart';
-import 'package:stellar_anchor_admin_app/util/prefs.dart';
-import 'package:stellar_anchor_admin_app/util/slide_right.dart';
-import 'package:stellar_anchor_admin_app/util/util.dart';
-
+import 'package:stellar_anchor_library/models/anchor.dart';
+import 'package:stellar_anchor_library/util/prefs.dart';
+import 'package:stellar_anchor_library/util/slide_right.dart';
+import 'package:stellar_anchor_library/util/util.dart';
+import 'package:stellar_anchor_library/widgets/round_logo.dart';
 import 'agent_list.dart';
 import 'login.dart';
 
@@ -80,6 +80,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
       child: Scaffold(
         body: Padding(
@@ -87,16 +88,13 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
           child: Stack(
             children: <Widget>[
               Positioned(
-                top: 220,
-                left: 100,
+                top: 280,
+                left: 32,
                 child: ScaleTransition(
                   scale: animation2,
                   child: Hero(
                     tag: 'logo',
-                    child: Image.asset(
-                      'assets/logo/logo.png',
-                      scale: 0.6,
-                    ),
+                    child: RoundLogo(radius:72, margin: 8),
                   ),
                 ),
               ),
@@ -145,13 +143,13 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                         ),
                       ),
                       onPressed: () {
-                        print("🍎 🍎 Call to Action Tapped!  🍎");
+                        print("🍎 🍎 Navigating to Agent List ... !  🍎");
                         Navigator.push(
                             context,
                             PageTransition(
                                 type: PageTransitionType.scale,
-                                alignment: Alignment.bottomCenter,
-                                duration: Duration(seconds: 1),
+                                alignment: Alignment.topLeft,
+                                duration: Duration(seconds: 2),
                                 child: AgentList()));
 //                        Navigator.push(
 //                            context,

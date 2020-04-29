@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:stellar_anchor_admin_app/models/agent.dart';
-import 'package:stellar_anchor_admin_app/util/functions.dart';
-import 'package:stellar_anchor_admin_app/util/util.dart';
+import 'package:stellar_anchor_library/models/agent.dart';
+import 'package:stellar_anchor_library/util/functions.dart';
+import 'package:stellar_anchor_library/util/util.dart';
 
 class AgentEditorMobile extends StatefulWidget {
   final Agent agent;
@@ -65,11 +65,15 @@ class _PageUnoState extends State<PageUno> with SingleTickerProviderStateMixin {
         key: _formState,
         child: ListView(
           children: <Widget>[
+            SizedBox(
+              height: 28,
+            ),
             TextFormField(
               controller: fNameController,
               decoration: InputDecoration(
                 labelText: 'First Name',
                 hintText: 'Enter First Name',
+                icon: Icon(Icons.person, color: baseColor),
               ),
               validator: (value) {
                 if (value.isEmpty) {
@@ -86,6 +90,10 @@ class _PageUnoState extends State<PageUno> with SingleTickerProviderStateMixin {
               decoration: InputDecoration(
                 labelText: 'Last Name',
                 hintText: 'Enter Last Name',
+                icon: Icon(
+                  Icons.people,
+                  color: baseColor,
+                ),
               ),
               validator: (value) {
                 if (value.isEmpty) {
@@ -100,6 +108,7 @@ class _PageUnoState extends State<PageUno> with SingleTickerProviderStateMixin {
               decoration: InputDecoration(
                 labelText: 'Email Address',
                 hintText: 'Enter Email',
+                icon: Icon(Icons.email, color: baseColor),
               ),
               validator: (value) {
                 if (value.isEmpty) {
@@ -112,9 +121,9 @@ class _PageUnoState extends State<PageUno> with SingleTickerProviderStateMixin {
               controller: cellController,
               keyboardType: TextInputType.phone,
               decoration: InputDecoration(
-                labelText: 'Cellphone Number',
-                hintText: 'Enter Cellphone Number',
-              ),
+                  labelText: 'Cellphone Number',
+                  hintText: 'Enter Cellphone Number',
+                  icon: Icon(Icons.phone, color: baseColor)),
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter Cellphone Number';
@@ -123,11 +132,11 @@ class _PageUnoState extends State<PageUno> with SingleTickerProviderStateMixin {
               },
             ),
             SizedBox(
-              height: 28,
+              height: 60,
             ),
             Container(
               child: RaisedButton(
-                  color: baseColor,
+                  color: secondaryColor,
                   elevation: 4,
                   onPressed: () {
                     setState(() {
@@ -142,7 +151,7 @@ class _PageUnoState extends State<PageUno> with SingleTickerProviderStateMixin {
                           )
                         : Text(
                             'Next',
-                            style: Styles.blueSmall,
+                            style: Styles.blackSmall,
                           ),
                   )),
             )

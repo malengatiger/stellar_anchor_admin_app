@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stellar_anchor_admin_app/ui/desktop/splash_desktop.dart';
-import 'package:stellar_anchor_admin_app/util/util.dart';
+import 'package:stellar_anchor_library/util/util.dart';
 
 class SplashMobile extends StatelessWidget {
   @override

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_builder/responsive_builder.dart';
-import 'package:stellar_anchor_admin_app/models/agent.dart';
 import 'package:stellar_anchor_admin_app/ui/mobile/mobile_agent_detail.dart';
+import 'package:stellar_anchor_library/models/agent.dart';
 
 class AgentDetail extends StatefulWidget {
   final Agent agent;

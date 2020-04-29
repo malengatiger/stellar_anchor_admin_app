@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:stellar_anchor_admin_app/api/auth.dart';
-import 'package:stellar_anchor_admin_app/util/functions.dart';
-import 'package:stellar_anchor_admin_app/util/snack.dart';
+import 'package:stellar_anchor_library/api/auth.dart';
+import 'package:stellar_anchor_library/util/functions.dart';
+import 'package:stellar_anchor_library/util/snack.dart';
 
 class LoginDesktop extends StatefulWidget {
   @override
@@ -153,7 +153,7 @@ class _LoginDesktopState extends State<LoginDesktop>
       isBusy = true;
     });
     try {
-      await Auth.signIn(email: email, password: password);
+      await Auth.signInAnchor(email: email, password: password);
       print('✳️✳️✳️✳️✳️✳️✳️ signed in ok, ✳️ popping .....');
       Navigator.pop(context, true);
     } catch (e) {

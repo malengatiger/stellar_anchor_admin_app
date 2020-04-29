@@ -13,6 +13,11 @@
       <excludeFolder url="file://$MODULE_DIR$/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/build" />
     </content>
+    <content url="file://$MODULE_DIR$/../stellar_anchor_library">
+      <excludeFolder url="file://$MODULE_DIR$/../stellar_anchor_library/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/../stellar_anchor_library/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/../stellar_anchor_library/build" />
+    </content>
     <orderEntry type="jdk" jdkName="Android API 21 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Dart SDK" level="project" />

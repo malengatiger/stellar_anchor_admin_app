@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stellar_anchor_admin_app/util/util.dart';
+import 'package:stellar_anchor_library/util/util.dart';
 
 class SplashDesktop extends StatelessWidget {
   @override
