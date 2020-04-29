@@ -41,8 +41,10 @@ class _AgentFunderMobileState extends State<AgentFunderMobile>
       isBusy = true;
     });
     currentBalances =
-        await agentBloc.getBalances(widget.agent.stellarAccountId);
+        await agentBloc.getLocalBalances(widget.agent.stellarAccountId);
     p("🔵🔵🔵🔵🔵 _AgentFunderMobileState: 🔵 Balances: ${currentBalances.toJson()}");
+    currentBalances =
+        await agentBloc.getRemoteBalances(widget.agent.stellarAccountId);
     setState(() {
       isBusy = false;
     });
@@ -83,10 +85,10 @@ class _AgentFunderMobileState extends State<AgentFunderMobile>
         child: Scaffold(
       key: _key,
       backgroundColor: secondaryColor,
-      
       appBar: AppBar(
         title: Text('Agent Funding'),
-          backgroundColor: secondaryColor, elevation: 0,
+        backgroundColor: secondaryColor,
+        elevation: 0,
         bottom: PreferredSize(
             child: Padding(
               padding: const EdgeInsets.all(12.0),
@@ -117,14 +119,17 @@ class _AgentFunderMobileState extends State<AgentFunderMobile>
                     currentBalances == null
                         ? Container()
                         : Center(
-                          child: CurrencyDropDown(
-                              balances: currentBalances, listener: this),
-                        ),
+                            child: CurrencyDropDown(
+                                balances: currentBalances, listener: this),
+                          ),
                     SizedBox(height: 20),
                     currentBalances == null
                         ? Container()
-                        : Image.asset(CurrencyIcons.getCurrencyImagePath(
-                            _selectedBalance.assetCode), height:48,width:48),
+                        : Image.asset(
+                            CurrencyIcons.getCurrencyImagePath(
+                                _selectedBalance.assetCode),
+                            height: 48,
+                            width: 48),
                     SizedBox(height: 20),
                     TextField(
                       keyboardType: TextInputType.number,
@@ -146,15 +151,19 @@ class _AgentFunderMobileState extends State<AgentFunderMobile>
                       ),
                     ),
                     SizedBox(height: 20),
-                    
                   ],
                 ),
               ),
             ),
           ),
           Positioned(
-            left: 20, bottom: 2,
-            child: BalancesScroller(balances: currentBalances, direction: Axis.vertical, ),),
+            left: 20,
+            bottom: 2,
+            child: BalancesScroller(
+              balances: currentBalances,
+              direction: Axis.vertical,
+            ),
+          ),
         ],
       ),
     ));

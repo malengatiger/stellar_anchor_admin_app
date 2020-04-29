@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:stellar_anchor_admin_app/bloc/agent_bloc.dart';
@@ -43,7 +42,15 @@ class _AgentDetailMobileState extends State<AgentDetailMobile> {
     path = RandomImage.getImagePath();
     clients = await agentBloc.getClients(widget.agent.agentId);
     currentBalances =
-        await agentBloc.getBalances(widget.agent.stellarAccountId);
+        await agentBloc.getLocalBalances(widget.agent.stellarAccountId);
+    if (mounted) {
+      setState(() {});
+    }
+    currentBalances =
+        await agentBloc.getRemoteBalances(widget.agent.stellarAccountId);
+    if (mounted) {
+      setState(() {});
+    }
     p('🎁 Clients and Balances received in UI ... 🔆 🔆 🔆 🔆 🔆 🔆 🔆 ');
     agentBloc.busyStream.listen((List<bool> busies) {
       p('Received busy status ... 🔆 🔆 🔆  ${busies.last}');
@@ -115,7 +122,7 @@ class _AgentDetailMobileState extends State<AgentDetailMobile> {
                 icon: Icon(Icons.refresh),
                 onPressed: () {
                   agentBloc.getClients(widget.agent.agentId);
-                  agentBloc.getBalances(widget.agent.stellarAccountId);
+                  agentBloc.getRemoteBalances(widget.agent.stellarAccountId);
                 }),
           ],
           elevation: 0,

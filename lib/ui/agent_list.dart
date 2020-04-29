@@ -30,6 +30,12 @@ class _AgentListState extends State<AgentList>
     _refresh();
   }
 
+  @override
+  void dispose() {
+    animController.dispose();
+    super.dispose();
+  }
+
   _setProductionStatus() async {
     productionMode = await isProductionMode();
   }
@@ -71,7 +77,8 @@ class _AgentListState extends State<AgentList>
     if (_anchor != null) {
       _agents = agentBloc.agents;
       if (_agents.isEmpty) {
-        _agents = await agentBloc.getAgents(_anchor.anchorId);
+        _agents = await agentBloc.getAgents(
+            anchorId: _anchor.anchorId, refresh: true);
       }
       setState(() {
         isBusy = false;
@@ -134,7 +141,7 @@ class _AgentListState extends State<AgentList>
           IconButton(
               icon: Icon(Icons.refresh),
               onPressed: () {
-                agentBloc.getAgents(_anchor.anchorId);
+                agentBloc.getAgents(anchorId: _anchor.anchorId, refresh: true);
               }),
           IconButton(
               icon: Icon(Icons.add),

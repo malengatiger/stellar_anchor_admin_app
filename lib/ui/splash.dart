@@ -9,6 +9,7 @@ import 'package:stellar_anchor_library/util/prefs.dart';
 import 'package:stellar_anchor_library/util/slide_right.dart';
 import 'package:stellar_anchor_library/util/util.dart';
 import 'package:stellar_anchor_library/widgets/round_logo.dart';
+
 import 'agent_list.dart';
 import 'login.dart';
 
@@ -80,7 +81,6 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-
     return SafeArea(
       child: Scaffold(
         body: Padding(
@@ -88,13 +88,13 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
           child: Stack(
             children: <Widget>[
               Positioned(
-                top: 280,
+                top: 360,
                 left: 32,
                 child: ScaleTransition(
                   scale: animation2,
                   child: Hero(
                     tag: 'logo',
-                    child: RoundLogo(radius:72, margin: 8),
+                    child: RoundLogo(radius: 72, margin: 8),
                   ),
                 ),
               ),
@@ -109,7 +109,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
 //                          mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             SizedBox(
-                              height: 320,
+                              height: 400,
                             ),
                             Text(anchorUser.firstName,
                                 style: TextStyle(
