@@ -40,7 +40,7 @@ class _AgentDetailMobileState extends State<AgentDetailMobile> {
   _setup() async {
     weAreInProduction = await isProductionMode();
     path = RandomImage.getImagePath();
-    clients = await agentBloc.getClients(widget.agent.agentId);
+    clients = await agentBloc.getClients(agentId: widget.agent.agentId);
     currentBalances =
         await agentBloc.getLocalBalances(widget.agent.stellarAccountId);
     if (mounted) {
@@ -121,7 +121,8 @@ class _AgentDetailMobileState extends State<AgentDetailMobile> {
             IconButton(
                 icon: Icon(Icons.refresh),
                 onPressed: () {
-                  agentBloc.getClients(widget.agent.agentId);
+                  agentBloc.getClients(
+                      agentId: widget.agent.agentId, refresh: true);
                   agentBloc.getRemoteBalances(widget.agent.stellarAccountId);
                 }),
           ],

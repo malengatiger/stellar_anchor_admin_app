@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:stellar_anchor_admin_app/bloc/agent_bloc.dart';
 import 'package:stellar_anchor_library/models/agent.dart';
 import 'package:stellar_anchor_library/models/balance.dart';
@@ -26,6 +27,9 @@ class _AgentFunderMobileState extends State<AgentFunderMobile>
   bool isBusy = false;
   Balance _selectedBalance;
   var _key = GlobalKey<ScaffoldState>();
+  var textController = TextEditingController();
+
+  String lastTransaction;
 
   @override
   void initState() {
@@ -42,9 +46,10 @@ class _AgentFunderMobileState extends State<AgentFunderMobile>
     });
     currentBalances =
         await agentBloc.getLocalBalances(widget.agent.stellarAccountId);
-    p("🔵🔵🔵🔵🔵 _AgentFunderMobileState: 🔵 Balances: ${currentBalances.toJson()}");
+    p("🔵 🔵 🔵 🔵 🔵 _AgentFunderMobileState: 🔵 getLocalBalances Balances: ${currentBalances.toJson()}");
     currentBalances =
         await agentBloc.getRemoteBalances(widget.agent.stellarAccountId);
+    p("🍎 🍎  🍎  🍎  🍎 _AgentFunderMobileState: 🔵 getRemoteBalances Balances: ${currentBalances.toJson()}");
     setState(() {
       isBusy = false;
     });
@@ -57,6 +62,7 @@ class _AgentFunderMobileState extends State<AgentFunderMobile>
   }
 
   _sendMoneyToAgent() async {
+    p('💧 Sending money to agent ....');
     if (amount == null || amount == 0.0) {
       AppSnackBar.showErrorSnackBar(
           scaffoldKey: _key, message: 'Please enter the amount');
@@ -66,9 +72,10 @@ class _AgentFunderMobileState extends State<AgentFunderMobile>
     p('MobileFunder: 🍊 🍊 🍊 send $amount to agent: 💚 ${widget.agent.toJson()} ');
     setState(() {
       isBusy = true;
+      lastTransaction = null;
     });
     try {
-      await agentBloc.sendMoneyToAgent(
+      currentBalances = await agentBloc.sendMoneyToAgent(
           amount: amount.toString(),
           agent: widget.agent,
           assetCode: _selectedBalance.assetCode);
@@ -77,6 +84,24 @@ class _AgentFunderMobileState extends State<AgentFunderMobile>
       AppSnackBar.showErrorSnackBar(
           scaffoldKey: _key, message: "Payment failed");
     }
+    setState(() {
+      isBusy = false;
+      textController.text = '';
+      lastTransaction = "Payment of ${_selectedBalance.assetCode} $amount  "
+          "at ${getFormattedDateHour(DateTime.now().toIso8601String())}";
+      amount = null;
+    });
+  }
+
+  Widget _getSelected() {
+    return Container(
+      decoration: BoxDecoration(
+          boxShadow: customShadow, color: baseColor, shape: BoxShape.circle),
+      child: Image.asset(
+          CurrencyIcons.getCurrencyImagePath(_selectedBalance.assetCode),
+          height: 48,
+          width: 48),
+    );
   }
 
   @override
@@ -84,10 +109,13 @@ class _AgentFunderMobileState extends State<AgentFunderMobile>
     return SafeArea(
         child: Scaffold(
       key: _key,
-      backgroundColor: secondaryColor,
+      backgroundColor: baseColor,
       appBar: AppBar(
-        title: Text('Agent Funding'),
-        backgroundColor: secondaryColor,
+        title: Text(
+          'Agent Funding',
+          style: Styles.whiteSmall,
+        ),
+        backgroundColor: baseColor,
         elevation: 0,
         bottom: PreferredSize(
             child: Padding(
@@ -98,7 +126,7 @@ class _AgentFunderMobileState extends State<AgentFunderMobile>
                     widget.agent == null
                         ? ''
                         : widget.agent.personalKYCFields.getFullName(),
-                    style: Styles.blackBoldMedium,
+                    style: Styles.blackBoldSmall,
                   ),
                 ],
               ),
@@ -108,61 +136,105 @@ class _AgentFunderMobileState extends State<AgentFunderMobile>
       body: Stack(
         children: <Widget>[
           Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.only(
+                top: 12.0, bottom: 60, left: 16, right: 16),
             child: Container(
               decoration:
-                  BoxDecoration(boxShadow: customShadow, color: baseColor),
+                  BoxDecoration(boxShadow: customShadow, color: secondaryColor),
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(28.0),
                 child: ListView(
                   children: <Widget>[
-                    currentBalances == null
-                        ? Container()
-                        : Center(
-                            child: CurrencyDropDown(
-                                balances: currentBalances, listener: this),
-                          ),
-                    SizedBox(height: 20),
-                    currentBalances == null
-                        ? Container()
-                        : Image.asset(
-                            CurrencyIcons.getCurrencyImagePath(
-                                _selectedBalance.assetCode),
-                            height: 48,
-                            width: 48),
-                    SizedBox(height: 20),
-                    TextField(
-                      keyboardType: TextInputType.number,
-                      maxLength: 20,
-                      style: Styles.blackBoldLarge,
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Enter Amount',
-                          labelText: 'Amount'),
-                      onChanged: _onAmountChanged,
-                    ),
-                    SizedBox(height: 20),
-                    RaisedButton(
-                      onPressed: _sendMoneyToAgent,
-                      color: secondaryColor,
+                    SizedBox(height: 80),
+                    Container(
+                      decoration: BoxDecoration(
+                          boxShadow: customShadow,
+                          color: secondaryColor,
+                          borderRadius: BorderRadius.all(Radius.circular(20))),
                       child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Text('Send Money'),
+                        padding: const EdgeInsets.only(
+                            left: 28, right: 28, top: 20, bottom: 20),
+                        child: TextField(
+                          controller: textController,
+                          keyboardType: TextInputType.number,
+                          maxLength: 20,
+                          style: Styles.blackBoldMedium,
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              hintText: '0000.00',
+                              labelText: 'Amount'),
+                          onChanged: _onAmountChanged,
+                        ),
                       ),
                     ),
                     SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.all(28.0),
+                      child: _selectedBalance == null
+                          ? Container()
+                          : RaisedButton(
+                              onPressed: _sendMoneyToAgent,
+                              elevation: isBusy ? 0 : 8,
+                              color: isBusy
+                                  ? Colors.pink[200]
+                                  : Colors.indigo[300],
+                              child: Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: isBusy
+                                    ? CircularProgressIndicator(
+                                        backgroundColor: Colors.white,
+                                      )
+                                    : Text(
+                                        'Send Agent Funds',
+                                        style: Styles.whiteSmall,
+                                      ),
+                              ),
+                            ),
+                    ),
+//                    SizedBox(height: 8),
+//                    SizedBox(height: 20),
+                    lastTransaction == null
+                        ? Container()
+                        : Text(
+                            lastTransaction,
+                            style: Styles.blackSmall,
+                          ),
                   ],
                 ),
               ),
             ),
           ),
           Positioned(
-            left: 20,
-            bottom: 2,
-            child: BalancesScroller(
-              balances: currentBalances,
-              direction: Axis.vertical,
+            left: 60,
+            bottom: 20,
+            child: Container(
+              height: 80,
+              width: 300,
+              decoration:
+                  BoxDecoration(boxShadow: customShadow, color: baseColor),
+              child: BalancesScroller(
+                balances: currentBalances,
+                direction: Axis.horizontal,
+              ),
             ),
+          ),
+          Positioned(
+            left: 80,
+            top: 60,
+            child: currentBalances == null
+                ? Container()
+                : Center(
+                    child: Row(
+                      children: <Widget>[
+                        CurrencyDropDown(
+                            balances: currentBalances, listener: this),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        _selectedBalance == null ? Container() : _getSelected(),
+                      ],
+                    ),
+                  ),
           ),
         ],
       ),

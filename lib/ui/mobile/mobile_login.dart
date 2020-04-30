@@ -76,7 +76,8 @@ class _LoginFormState extends State<LoginForm>
   @override
   void initState() {
     super.initState();
-    emailCntr.text = 'a_1587785499650@anchor.com';
+    //todo - remove login credentials after test
+    emailCntr.text = 'a_1588258661407@anchor.com';
     pswdCntr.text = 'pTiger3#Word!isWannamaker#23';
     _setUpAnimation();
   }

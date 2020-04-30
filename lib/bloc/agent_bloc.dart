@@ -39,12 +39,17 @@ class AgentBloc {
   StreamController<List<bool>> _busyController = StreamController.broadcast();
 
   Stream<List<Agent>> get agentStream => _agentController.stream;
+
   Stream<List<bool>> get busyStream => _busyController.stream;
+
   Stream<List<String>> get errorStream => _errorController.stream;
+
   Stream<List<Client>> get clientStream => _clientController.stream;
+
   Stream<List<Balances>> get balancesStream => _balancesController.stream;
 
   List<Agent> get agents => _agents;
+
   List<Client> get clients => _clients;
 
   FirebaseAuth _auth = FirebaseAuth.instance;
@@ -62,20 +67,28 @@ class AgentBloc {
   }
 
 // public PaymentRequest sendPayment(PaymentRequest paymentRequest) throws Exception {
-  Future sendMoneyToAgent(
+  Future<Balances> sendMoneyToAgent(
       {@required Agent agent,
       @required String amount,
       @required String assetCode}) async {
+    assert(amount != null);
+    assert(assetCode != null);
     var fundRequest = AgentFundingRequest(
         anchorId: agent.anchorId,
         amount: amount,
         date: DateTime.now().toIso8601String(),
         agentId: agent.agentId,
-        assetCode: assetCode);
+        assetCode: assetCode,
+        userId: _anchorUser.userId);
+    p('agentBloc:  🏈  🏈  🏈 sendMoneyToAgent ... check asset code is not null: ${fundRequest.toJson()}');
 
     var result = await NetUtil.post(
-        headers: null, apiRoute: 'fundAgent', bag: fundRequest.toJson());
+        headers: NetUtil.xHeaders,
+        apiRoute: 'fundAgent',
+        bag: fundRequest.toJson());
     p(result);
+    p("💧 💧 💧 💧 💧 refreshing agent account balances after payment. check balance of 🌼 $assetCode ....");
+    return await _readRemoteBalances(agent.stellarAccountId);
   }
 
   Future<AnchorUser> getAnchorUser() async {
@@ -133,6 +146,7 @@ class AgentBloc {
         await _getRemoteClients(agentId);
       } else {
         _clients = await AnchorLocalDB.getClientsByAgent(agentId);
+        p('🔵 🔵 🔵 🔵  Agent\'s clients found on LOCAL cache : 🎁  ${_clients.length} 🎁 ');
         if (clients.isEmpty) {
           await _getRemoteClients(agentId);
         }
@@ -159,7 +173,10 @@ class AgentBloc {
     _busies.add(false);
     _busyController.sink.add(_busies);
     _clientController.sink.add(_clients);
-    p('🌿 🌿 🌿 Agent\'s clients found on database : 🎁  ${_clients.length} 🎁 ');
+    p('🌿 🌿 🌿 Agent\'s clients found on REMOTE database : 🎁  ${_clients.length} 🎁 ');
+    _clients.forEach((element) async {
+      await AnchorLocalDB.addClient(client: element);
+    });
   }
 
   Future<Balances> _readRemoteBalances(String accountId) async {
@@ -167,47 +184,70 @@ class AgentBloc {
         headers: null,
         apiRoute: 'getAccountUsingAccountId?accountId=$accountId');
     var mBalances = Balances.fromJson(result);
-    p('\n\n🔆 🔆 🔆 AgentBloc:getBalances ️️❤️  printing the result from the get call ...');
+    p('\n🔆 🔆 🔆 AgentBloc:_readRemoteBalances ️️❤️  printing the result from the get call ...');
     p(result);
     await AnchorLocalDB.addBalance(balances: mBalances);
-    return mBalances;
+
+    Balances newBal = _processAssetCodes(mBalances);
+    p('👌 New Balances after processing native to XLM: 👌 ${newBal.toJson()} 👌');
+    return newBal;
   }
 
   Future<Balances> getLocalBalances(String accountId) async {
+    Balances mBalances;
     try {
       _busies.add(true);
       _busyController.sink.add(_busies);
       p('🍎 AgentBloc: getLocalBalances .... $accountId ..... ');
-      var mBalances = await AnchorLocalDB.getLastBalances(accountId);
-      _doBalancesStream(mBalances);
-    } catch (e) {
-      p(e);
-      _balanceError();
-    }
-    if (_balances.isEmpty) {
-      _balanceError();
-    }
-    return _balances.last;
-  }
-
-  Future<Balances> getRemoteBalances(String accountId) async {
-    try {
-      _busies.add(true);
-      _busyController.sink.add(_busies);
-      //todo - get balances
-      var mBalances = await _readRemoteBalances(accountId);
-      if (mBalances != null) {
-        await AnchorLocalDB.addBalance(balances: mBalances);
+      mBalances = await AnchorLocalDB.getLastBalances(accountId);
+      if (mBalances == null) {
+        return null;
       }
       _doBalancesStream(mBalances);
     } catch (e) {
       p(e);
       _balanceError();
     }
-    if (_balances.isEmpty) {
+    Balances newBal = _processAssetCodes(mBalances);
+    return newBal;
+  }
+
+  Balances _processAssetCodes(Balances mBalances) {
+    var newBal = Balances();
+    newBal.account = mBalances.account;
+    newBal.date = mBalances.date;
+    newBal.sequenceNumber = mBalances.sequenceNumber;
+    newBal.balances = [];
+    mBalances.balances.forEach((element) {
+      if (element.assetCode == null) {
+        element.assetCode = 'XLM';
+      }
+      newBal.balances.add(element);
+    });
+
+    p('_processAssetCodes: 🔆 🔆 🔆 ${newBal.toJson()}');
+    return newBal;
+  }
+
+  Future<Balances> getRemoteBalances(String accountId) async {
+    Balances mBalances;
+    try {
+      _busies.add(true);
+      _busyController.sink.add(_busies);
+      //todo - get balances
+      mBalances = await _readRemoteBalances(accountId);
+      if (mBalances != null) {
+        await AnchorLocalDB.addBalance(balances: mBalances);
+      } else {
+        return null;
+      }
+      _doBalancesStream(mBalances);
+    } catch (e) {
+      p(e);
       _balanceError();
     }
-    return _balances.last;
+
+    return mBalances;
   }
 
   void _balanceError() {

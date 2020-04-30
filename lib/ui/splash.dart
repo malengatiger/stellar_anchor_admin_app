@@ -6,7 +6,6 @@ import 'package:stellar_anchor_admin_app/ui/desktop/splash_desktop.dart';
 import 'package:stellar_anchor_admin_app/ui/mobile/splash_mobile.dart';
 import 'package:stellar_anchor_library/models/anchor.dart';
 import 'package:stellar_anchor_library/util/prefs.dart';
-import 'package:stellar_anchor_library/util/slide_right.dart';
 import 'package:stellar_anchor_library/util/util.dart';
 import 'package:stellar_anchor_library/widgets/round_logo.dart';
 
@@ -48,7 +47,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
       }
     });
     super.initState();
-    p("💙 💙 💙 ... initState .....");
+    p("💙 💙 💙 ANCHOR ADMIN APP:  🍎 🍎  ... initState .....");
     _setEnvironment();
   }
 
@@ -67,7 +66,18 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
     p("💙 💙 💙 💙 💙 💙 This app works with STELLAR ANCHOR: 🏈 $name 🏈 (from .env file)");
     anchorUser = await Prefs.getAnchorUser();
     if (anchorUser == null) {
-      Navigator.push(context, SlideRightRoute(widget: Login()));
+      bool isLoggedIn = await Navigator.push(
+          context,
+          PageTransition(
+              type: PageTransitionType.scale,
+              alignment: Alignment.topLeft,
+              duration: Duration(seconds: 2),
+              child: Login()));
+      if (isLoggedIn) {
+        p('🍎 🍎 🍎 We are logged in, Senor! ... check logo and name animations ....');
+        anchorUser = await Prefs.getAnchorUser();
+        setState(() {});
+      }
     } else {
       p('💦 💦 💦 We good. Had a saved anchor: 💦 💦 💦 ${anchorUser.toJson()} 💦 💦 💦 ');
       p('💦 💦 💦 ....  ANCHOR from local cache: $name: 🍎 🍎 🍎 anchorUser:  ${anchorUser.toJson()}');
