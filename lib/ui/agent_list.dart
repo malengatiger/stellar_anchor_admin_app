@@ -8,6 +8,7 @@ import 'package:stellar_anchor_library/models/anchor.dart';
 import 'package:stellar_anchor_library/util/functions.dart';
 import 'package:stellar_anchor_library/util/util.dart';
 import 'package:stellar_anchor_library/widgets/avatar.dart';
+import 'package:stellar_anchor_library/widgets/round_number.dart';
 
 class AgentList extends StatefulWidget {
   @override
@@ -116,9 +117,9 @@ class _AgentListState extends State<AgentList>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.brown[100],
+      backgroundColor: secondaryColor,
       appBar: AppBar(
-        backgroundColor: Colors.brown[100],
+        backgroundColor: secondaryColor,
         bottom: PreferredSize(
             child: Padding(
               padding: const EdgeInsets.only(left: 20.0),
@@ -204,33 +205,16 @@ class _AgentListState extends State<AgentList>
                 }),
           ),
           Positioned(
-            right: 20,
-            top: 0,
-            child: Container(
-              width: _agents.length < 100000 ? 80 : 90,
-              height: _agents.length < 100000 ? 80 : 90,
-              decoration: BoxDecoration(
-                  boxShadow: customShadow,
-                  color: secondaryColor,
-                  shape: BoxShape.circle),
-              child: Center(
-                child: Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                      boxShadow: customShadow,
-                      color: baseColor,
-                      shape: BoxShape.circle),
-                  child: Center(
-                    child: Text(
-                      "${_agents.length}",
-                      style: Styles.blackBoldSmall,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
+              right: 16,
+              top: 8,
+              child: RoundNumberWidget(
+                number: _agents.length,
+                radius: 60,
+                margin: 12,
+                marginColor: Colors.blue[200],
+                mainColor: Colors.pink[200],
+                textStyle: Styles.whiteBoldSmall,
+              )),
           isBusy
               ? Positioned(
                   left: 20,

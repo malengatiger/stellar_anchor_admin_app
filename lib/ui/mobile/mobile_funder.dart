@@ -62,6 +62,7 @@ class _AgentFunderMobileState extends State<AgentFunderMobile>
   }
 
   _sendMoneyToAgent() async {
+    if (isBusy) return;
     p('💧 Sending money to agent ....');
     if (amount == null || amount == 0.0) {
       AppSnackBar.showErrorSnackBar(
@@ -109,13 +110,13 @@ class _AgentFunderMobileState extends State<AgentFunderMobile>
     return SafeArea(
         child: Scaffold(
       key: _key,
-      backgroundColor: baseColor,
+      backgroundColor: secondaryColor,
       appBar: AppBar(
         title: Text(
           'Agent Funding',
           style: Styles.whiteSmall,
         ),
-        backgroundColor: baseColor,
+        backgroundColor: secondaryColor,
         elevation: 0,
         bottom: PreferredSize(
             child: Padding(
@@ -176,7 +177,7 @@ class _AgentFunderMobileState extends State<AgentFunderMobile>
                               onPressed: _sendMoneyToAgent,
                               elevation: isBusy ? 0 : 8,
                               color: isBusy
-                                  ? Colors.pink[200]
+                                  ? Colors.pink[600]
                                   : Colors.indigo[300],
                               child: Padding(
                                 padding: const EdgeInsets.all(20.0),
@@ -227,7 +228,10 @@ class _AgentFunderMobileState extends State<AgentFunderMobile>
                     child: Row(
                       children: <Widget>[
                         CurrencyDropDown(
-                            balances: currentBalances, listener: this),
+                          balances: currentBalances,
+                          listener: this,
+                          showXLM: false,
+                        ),
                         SizedBox(
                           width: 20,
                         ),

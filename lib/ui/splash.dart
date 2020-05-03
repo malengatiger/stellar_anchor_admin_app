@@ -93,6 +93,7 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: secondaryColor,
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Stack(
@@ -143,12 +144,12 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
                   ),
                   Spacer(),
                   RaisedButton(
-                      elevation: 2,
-                      color: Colors.brown[100],
+                      elevation: 4,
+                      color: Colors.indigo[300],
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Text(
-                          "Continue ...",
+                          "Continue to Agent List",
                           style: TextStyle(color: Colors.white, fontSize: 14),
                         ),
                       ),

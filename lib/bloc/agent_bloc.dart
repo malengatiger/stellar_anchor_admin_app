@@ -236,6 +236,7 @@ class AgentBloc {
       _busyController.sink.add(_busies);
       //todo - get balances
       mBalances = await _readRemoteBalances(accountId);
+      mBalances.balances.sort((a, b) => a.assetCode.compareTo(b.assetCode));
       if (mBalances != null) {
         await AnchorLocalDB.addBalance(balances: mBalances);
       } else {

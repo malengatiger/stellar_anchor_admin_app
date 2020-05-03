@@ -89,7 +89,7 @@ class _AgentDetailMobileState extends State<AgentDetailMobile> {
             "Agent Details",
             style: Styles.blackSmall,
           ),
-          backgroundColor: Colors.brown[100],
+          backgroundColor: secondaryColor,
           actions: <Widget>[
             IconButton(
                 icon: Icon(Icons.attach_money),
@@ -145,7 +145,7 @@ class _AgentDetailMobileState extends State<AgentDetailMobile> {
             ),
           ),
         ),
-        backgroundColor: Colors.brown[100],
+        backgroundColor: baseColor,
         body: Stack(
           children: <Widget>[
             Positioned(

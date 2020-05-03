@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.stellar:java-stellar-sdk:0.14.0@jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.stellar/java-stellar-sdk/0.14.0/2aec88b81f635b1b638801ad682c658a7cb5166a/java-stellar-sdk-0.14.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.stellar/java-stellar-sdk/0.14.0/181c1c30327677b2c94cbbbc077f671357c9618f/java-stellar-sdk-0.14.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
