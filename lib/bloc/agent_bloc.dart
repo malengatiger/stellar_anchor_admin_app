@@ -278,6 +278,7 @@ class AgentBloc {
     _errorController.close();
     _busyController.close();
     _clientController.close();
+    _balancesController.close();
   }
 
   final FirebaseMessaging fcm = FirebaseMessaging();
