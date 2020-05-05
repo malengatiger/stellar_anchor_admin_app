@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:stellar_anchor_admin_app/bloc/agent_bloc.dart';
+import 'package:stellar_anchor_library/bloc/agent_bloc.dart';
 import 'package:stellar_anchor_library/models/agent.dart';
 import 'package:stellar_anchor_library/models/balance.dart';
 import 'package:stellar_anchor_library/models/balances.dart';

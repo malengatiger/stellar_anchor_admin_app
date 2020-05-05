@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:stellar_anchor_admin_app/bloc/agent_bloc.dart';
 import 'package:stellar_anchor_admin_app/ui/agent_editor.dart';
 import 'package:stellar_anchor_admin_app/ui/funder.dart';
+import 'package:stellar_anchor_library/bloc/agent_bloc.dart';
 import 'package:stellar_anchor_library/models/agent.dart';
 import 'package:stellar_anchor_library/models/balances.dart';
 import 'package:stellar_anchor_library/models/client.dart';
