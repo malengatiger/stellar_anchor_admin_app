@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           primarySwatch: Colors.pink,
           textTheme: GoogleFonts.ralewayTextTheme()),
+//      home: PayfastTester(),
       home: Splash(),
     );
   }

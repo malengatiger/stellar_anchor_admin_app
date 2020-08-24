@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:responsive_builder/responsive_builder.dart';
@@ -23,16 +22,14 @@ class _SplashState extends State<Splash> with TickerProviderStateMixin {
   bool isBusy = false, navigateToAgentList = false;
   AnimationController animController, animController2;
   Animation animation, animation2;
+  AnimationController _controller;
 
   initState() {
     animController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    );
+        vsync: this, duration: Duration(milliseconds: 1000));
     animController2 = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 3),
-    );
+        vsync: this, duration: Duration(milliseconds: 1000));
+    super.initState();
 
     animation = Tween(begin: 0.0, end: 1.0).animate(animController);
     animation2 = Tween(begin: 0.0, end: 1.0).animate(animController);
